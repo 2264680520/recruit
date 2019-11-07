@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <link rel="stylesheet" type="text/css" href="../asserts/plugins/bootstrap/css/bootstrap.css">
+        <script type="text/javascript" src="../asserts/plugins/jquery/jquery-3.4.1.js"></script>
+        <script type="text/javascript" src="../asserts/plugins/bootstrap/js/bootstrap.js"></script>
+        <script type="text/javascript" src="js/company.js"></script>
+        <style type="text/css">
+            div {
+                /* border: 1px solid black;*/
+                text-align: center;
+            }
+
+            th {
+                text-align: center;
+            }
+
+            td {
+                text-align: center;
+            }
+
+            form td {
+                height: 30px;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="width: 700px;margin: auto;margin-top: 20px">
+
+            <form id="publish">
+                <!-- 传递一个隐藏的用户id-->
+                <input type="hidden" id="id" name="id">
+                <table class="table">
+                    <tbody>
+                    <tr>
+                        <td> 用户名：</td>
+                        <td style="text-align: left">
+                            <input type="text" id="username" name="username">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> 密码：</td>
+                        <td style="text-align: left">
+                            <input type="text" id="password" name="password">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> 企业名称：</td>
+                        <td style="text-align: left">
+                            <input type="text" id="name" name="name">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> 地址：</td>
+                        <td style="text-align: left">
+                            <input type="text" id="address" name="address">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> 邮箱：</td>
+                        <td style="text-align: left">
+                            <input type="text" id="email" name="email">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td> 联系方式：</td>
+                        <td style="text-align: left">
+                            <input type="text" id="phone" name="phone">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> 公司简介：</td>
+                        <td>
+                            <textarea class="form-control" rows="3" id="introdu" name="introdu"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input type="button" value="修改" id="update">
+                            <input type="reset" value="重置">
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </form>
+
+        </div>
+    </body>
+</html>

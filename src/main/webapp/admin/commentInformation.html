@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <link rel="stylesheet" type="text/css" href="../asserts/plugins/bootstrap/css/bootstrap.css">
+        <script type="text/javascript" src="../asserts/plugins/jquery/jquery-3.4.1.js"></script>
+        <script type="text/javascript" src="../asserts/plugins/bootstrap/js/bootstrap.js"></script>
+        <script type="text/javascript" src="js/commentInformation.js"></script>
+        <style type="text/css">
+            /*   div {
+                   border: 1px black solid;
+               }*/
+            .d ul li {
+                list-style-type: none;
+                padding-left: 42px;
+                margin-bottom: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="width: 800px;margin: auto">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+
+                        <ul id="myTab" class="nav nav-tabs">
+                            <li class="active">
+                                <a href="#home" data-toggle="tab">
+                                    全部评论
+                                </a>
+                            </li>
+                            <li><a href="#ios" data-toggle="tab">职位详情</a></li>
+
+                        </ul>
+                        <div id="myTabContent" class="tab-content">
+                            <div class="tab-pane fade in active" id="home">
+                                <table class="table">
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                                <div class="fenye" style="text-align: center"></div>
+                            </div>
+                            <div class="tab-pane fade" id="ios">
+
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <td style="width: 50px">职位:</td>
+                                        <td id="post1"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 50px">薪资:</td>
+                                        <td id="salary"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 50px">公司:</td>
+                                        <td id="name1"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 50px">地址:</td>
+                                        <td id="address"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 50px">邮箱:</td>
+                                        <td id="email"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 50px">电话:</td>
+                                        <td id="phone"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 50px">职位需求:</td>
+                                        <td id="require"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 50px">公司简介:</td>
+                                        <td id="introdu"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 50px">发布时间:</td>
+                                        <td id="puttime"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </body>
+</html>

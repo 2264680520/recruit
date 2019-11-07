@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <link rel="stylesheet" type="text/css" href="../asserts/plugins/bootstrap/css/bootstrap.css">
+        <script type="text/javascript" src="../asserts/plugins/jquery/jquery-3.4.1.js"></script>
+        <script type="text/javascript" src="../asserts/plugins/bootstrap/js/bootstrap.js"></script>
+
+        <style type="text/css">
+            div {
+                /* border: 1px solid black;*/
+                text-align: center;
+            }
+
+            th {
+                text-align: center;
+            }
+
+            td {
+                text-align: center;
+            }
+
+            form td {
+                height: 30px;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="width: 700px;margin: auto;margin-top: 30px">
+
+            <form id="publish">
+                <!-- 传递一个隐藏的用户id-->
+                <input type="hidden" id="id" name="id">
+                <table class="table" border="1" cellpadding="1" cellspacing="1">
+                    <tbody>
+                    <tr>
+                        <td> 用户名：</td>
+                        <td style="text-align: left">
+                            <input type="text" id="username" value="admin" name="username">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> 密码：</td>
+                        <td style="text-align: left">
+                            <input type="text" id="password" value="admin" name="password">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2">
+                            <input type="button" value="修改" id="update">
+                            <input type="reset" value="重置">
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </form>
+
+        </div>
+    </body>
+</html>

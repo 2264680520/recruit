@@ -1,0 +1,205 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.recruit.mapper.IUserMapper">
+    <!--查询职位所有记录-->
+    <select id="getPositionsTotalCount" resultType="Integer">
+        select count(*) from positions where stauts=1
+    </select>
+    <!--多对一查询-->
+    <!-- 查询所有职位, 关联将公司查询出来 -->
+    <select id="getPositionsList" resultMap="PositionsWithCompany">
+			select c.* ,p.*,c.id as cid,p.id as pid
+            from company c,positions p
+            where c.id=p.c_id and p.stauts=1
+            ORDER BY p.puttime DESC
+            LIMIT #{arg0},#{arg1}
+		</select>
+    <resultMap type="Positions" id="PositionsWithCompany">
+        <id column="pid" property="id"/>
+        <result column="post" property="post"/>
+        <result column="require" property="require"/>
+        <result column="salary" property="salary"/>
+        <result column="puttime" property="puttime"/>
+        <result column="c_id" property="c_id"/>
+        <result column="is_delete" property="is_delete"/>
+        <result column="stauts" property="stauts"/>
+
+        <!--根据id找到职位实体类-->
+        <!-- property: 指的是属性名称, javaType：指的是属性的类型 -->
+        <association property="company" javaType="Company">
+            <id column="cid" property="id"/>
+            <result column="username" property="username"/>
+            <result column="password" property="password"/>
+            <result column="name" property="name"/>
+            <result column="address" property="address"/>
+            <result column="email" property="email"/>
+            <result column="phone" property="phone"/>
+            <result column="introdu" property="introdu"/>
+        </association>
+    </resultMap>
+
+    <!--根据职位id找到对应的评论列表-->
+    <select id="getCommentList" resultMap="getCommentWithUser" parameterType="Integer">
+       SELECT c.*,u.*,c.id as cid,u.id as uid
+       FROM `comment` c,`user` u
+       WHERE c.u_id=u.id AND p_id=#{pid}
+       ORDER BY rtime
+        LIMIT #{arg0},#{arg1}
+    </select>
+    <resultMap type="Comment" id="getCommentWithUser">
+        <id column="cid" property="id"/>
+        <result column="u_id" property="u_id"/>
+        <result column="p_id" property="p_id"/>
+        <result column="content" property="content"/>
+        <result column="rtime" property="rtime"/>
+        <!-- property: 指的是属性名称, javaType：指的是属性的类型 -->
+        <association property="user" javaType="User">
+            <id column="uid" property="id"/>
+            <result column="username" property="username"/>
+            <result column="password" property="password"/>
+            <result column="name" property="name"/>
+            <result column="sex" property="sex"/>
+            <result column="birthday" property="birthday"/>
+            <result column="school" property="school"/>
+            <result column="phone" property="phone"/>
+            <result column="email" property="email"/>
+            <result column="trade" property="trade"/>
+            <result column="salary" property="salary"/>
+            <result column="tip" property="tip"/>
+        </association>
+    </resultMap>
+
+
+    <!-- 查询所有的查询语句总数-->
+    <select id="getCommentTotalCount" resultType="Integer">
+        SELECT count(*) FROM comment WHERE p_id=#{pid}
+    </select>
+
+    <!--添加评论-->
+    <insert id="addComment" parameterType="Comment">
+       insert into comment(u_id,p_id,content,rtime) values(#{u_id},#{p_id},#{content},#{rtime})
+
+    </insert>
+
+    <!--模糊查询总条数-->
+    <select id="searchPostTotalCount" parameterType="String" resultType="Integer">
+            select COUNT(*)
+            from company c,positions p
+            where c.id=p.c_id and p.stauts=1 and CONCAT(post,',',`require`) LIKE "%"#{name}"%"
+    </select>
+
+    <!--模糊查询内容-->
+    <select id="searchPost" resultMap="searchPostWithCompany">
+            select c.* ,p.*,c.id as cid,p.id as pid
+            from company c,positions p
+            where c.id=p.c_id and p.stauts=1 and CONCAT(post,',',`require`) LIKE "%"#{name}"%"
+            ORDER BY p.puttime DESC
+            LIMIT #{arg0},#{arg1}
+    </select>
+    <resultMap type="Positions" id="searchPostWithCompany">
+        <id column="pid" property="id"/>
+        <result column="post" property="post"/>
+        <result column="require" property="require"/>
+        <result column="salary" property="salary"/>
+        <result column="puttime" property="puttime"/>
+        <result column="c_id" property="c_id"/>
+        <result column="is_delete" property="is_delete"/>
+        <result column="stauts" property="stauts"/>
+
+        <!--根据id找到职位实体类-->
+        <!-- property: 指的是属性名称, javaType：指的是属性的类型 -->
+        <association property="company" javaType="Company">
+            <id column="cid" property="id"/>
+            <result column="username" property="username"/>
+            <result column="password" property="password"/>
+            <result column="name" property="name"/>
+            <result column="address" property="address"/>
+            <result column="email" property="email"/>
+            <result column="phone" property="phone"/>
+            <result column="introdu" property="introdu"/>
+        </association>
+    </resultMap>
+
+    <!-- -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
+
+    <!--用户登录的映射器-->
+    <resultMap id="userLogin" type="User">
+        <id property="id" column="id"/>
+        <result property="username" column="username"></result>
+        <result property="password" column="password"></result>
+    </resultMap>
+
+
+    <!--用户登录sql语句-->
+    <select id="userLogin" resultMap="userLogin">
+        select * from user u where u.username = #{user.username } and u.password = #{user.password};
+    </select>
+
+
+    <!--用户注册sql语句-->
+    <insert id="addUser" keyProperty="addUser.id" useGeneratedKeys="true">
+        insert into user(username,password,name,sex,birthday,school,phone,email,trade,salary,tip) values (
+        #{addUser.username},
+        #{addUser.password},
+        #{addUser.name},
+        #{addUser.sex},
+        #{addUser.birthday},
+        #{addUser.school},
+        #{addUser.phone},
+        #{addUser.email},
+        #{addUser.trade},
+        #{addUser.salary},
+        #{addUser.tip}
+        );
+    </insert>
+
+
+    <!--通过id查找用户信息-->
+    <select id="findById" resultType="User">
+        SELECT *  FROM user WHERE id=#{id}
+    </select>
+
+    <!--修改用户信息-->
+    <update id="updateUser">
+        UPDATE user SET
+        username=#{user.username},
+        password=#{user.password},
+        name = #{user.name},
+        sex=#{user.sex},
+        birthday=#{user.birthday},
+        school=#{user.school},
+        phone=#{user.phone},
+        email=#{user.email},
+        trade=#{user.trade},
+        salary=#{user.salary},
+        tip=#{user.tip}
+        WHERE id=#{user.id};
+
+    </update>
+    <!--提交简历-->
+    <update id="submitUser">
+      UPDATE user SET
+      stauts =1
+      WHERE id=#{user.id}
+
+
+    </update>
+
+
+    <!--撤销简历-->
+    <update id="recallUser">
+        UPDATE user SET
+        stauts =0
+        WHERE id=#{user.id}
+    </update>
+
+    <!--李绮珊-->
+    <select id="getTotalCount" resultType="Integer">
+        select count(*) from user where stauts=1;
+    </select>
+
+    <select id="getPageUser" resultType="User">
+        select * from user where stauts=1 limit #{pages.offset},#{pages.pageSize}
+    </select>
+</mapper>

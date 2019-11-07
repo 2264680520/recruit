@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>职位展示</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!--解决乱码问题-->
+        <meta http-equiv="Content-Type" content="text/ html;charset=utf-8">
+        <!-- 引入 本地的 Bootstrap 的样式-->
+        <link href="asserts/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
+        <!-- 引入 线上的 Bootstrap 的样式-->
+        <!--<link href="https://cdn.bootcss.com/twitter-bootstrap/3.4.0/css/bootstrap.css" rel="stylesheet">-->
+
+        <!-- HTML5 Shiv 和 Respond.js 用于让 IE8 支持 HTML5元素和媒体查询 -->
+        <!-- 注意： 如果通过 file://  引入 Respond.js 文件，则该文件无法起效果 -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        <!-- jQuery (Bootstrap 的 JavaScript 插件需要引入 jQuery) -->
+        <script src="asserts/plugins/jquery/jquery-3.4.1.js"></script>
+        <!-- 引入本地的 Bootstrap 已编译的插件 -->
+        <script src="asserts/plugins/bootstrap/js/bootstrap.js"></script>
+        <script type="text/javascript" src="asserts/plugins/jquery/jquery-3.4.1.js"></script>
+        <script type="text/javascript">
+            $(function () {
+                var curPage = 1;
+                var pageCount;
+                ajas(curPage, pageCount)
+
+            })
+
+            function ajas(curPage, pageCount) {
+                var mydata = {
+                    current: curPage
+                }
+                $.ajax({
+                    url: "http://localhost:8080/recruit/employ/massage",
+                    contentType: "application/json;charset=UTF-8",
+                    type: "get",
+                    data: mydata,
+                    dataType: "json",
+                    success: function (data) {
+                        curPage = data.currentPage;
+                        pageCount = data.pageCount;
+                        if (pageCount == 1) {
+                            $("#button").append("<div class='di'><a onclick='first(" + curPage + "," + pageCount + ")'>首页</a>&nbsp;&nbsp;&nbsp;<a onclick='last(" + curPage + "," + pageCount + ")'>尾页</a></div>")
+                        } else {
+                            if (curPage == 1) {
+                                $("#button").append("<div class='di'><a onclick='first(" + curPage + "," + pageCount + ")'>首页</a>&nbsp;&nbsp;&nbsp;<a onclick='next(" + curPage + "," + pageCount + ")'>下一页</a>&nbsp;&nbsp;&nbsp;<a onclick='last(" + curPage + "," + pageCount + ")'>尾页</a></div>")
+                            } else if (curPage == pageCount) {
+                                $("#button").append("<div class='di'><a onclick='first(" + curPage + "," + pageCount + ")'>首页</a>&nbsp;&nbsp;&nbsp;<a onclick='before(" + curPage + "," + pageCount + ")'>上一页</a>&nbsp;&nbsp;&nbsp;<a onclick='last(" + curPage + "," + pageCount + ")'>尾页</a></div>")
+                            } else {
+                                $("#button").append("<div class='di'><a onclick='first(" + curPage + "," + pageCount + ")'>首页</a>&nbsp;&nbsp;&nbsp;<a onclick='before(" + curPage + "," + pageCount + ")'>上一页</a>&nbsp;&nbsp;&nbsp;<a onclick='next(" + curPage + "," + pageCount + ")'>下一页</a>&nbsp;&nbsp;&nbsp;<a onclick='last(" + curPage + "," + pageCount + ")'>尾页</a></div>")
+                            }
+                        }
+                        console.log(data.list)
+                        $(data.list).each(function () {
+                            var sta = this.stauts;
+                            if (sta == 1) {
+                                $("div:eq(0)").append("<div class='container'>" +
+                                    "<div class='row'><div class='col-md-12 list-group-item' >" +
+                                    "<h3>From:" + this.positions.company.name + "</h3><div class='col-md-12'>恭喜您！您提交的职业申请（" + this.positions.post + "）" +
+                                    "经本公司审核并通过！</div><div class='col-md-12 '>职业详情：</div>" +
+                                    "<div class='col-md-12'>岗位：" + this.positions.post + "</div>" +
+                                    "<div class='col-md-12'>薪资：" + this.positions.salary + "</div>" +
+                                    "<div class='col-md-12'>职业需求：" + this.positions.require + "</div>" +
+                                    "<div class='col-md-12'>请及时联系本公司预约面试（公司电话：" + this.positions.company.phone + "）</div>" +
+                                    "<div class='col-md-12'>公司地址：" + this.positions.company.address + "</div></div><div class='col-md-12'style='height: 20px'></div></div></div>")
+                            } else if (sta == 2) {
+                                $("div:eq(0)").append("<div class='container'>" +
+                                    "<div class='row'><div class='col-md-12 list-group-item '><h3>From:" + this.positions.company.name + "</h3><div class='col-md-12'>" +
+                                    "很遗憾！您提交的职业申请（" + this.positions.post + "）" +
+                                    "经本公司审核但未通过！可以修改个人简历后重新提交哦！</div></div><div class='col-md-12'style='height: 20px'></div></div></div>")
+                            } else if (sta == 3) {
+                                $("div:eq(0)").append("<div class='container'>" +
+                                    "<div class='row'><div class='col-md-12 list-group-item'><h3>From:" + this.positions.company.name + "</h3><div class='col-md-12'>" +
+                                    "您好！本公司在招聘平台看到您发布的简历，对您的条件表示满意！<div class='col-md-12'>可在三个工作日内联系本公司预约面试（公司电话：" + this.positions.company.phone + "）</div></div></div><div class='col-md-12'style='height: 20px'></div></div></div>")
+
+                            }
+                        })
+                    }
+                })
+            }
+
+            function first(curPage, pageCount) {
+                curPage = 1;
+                $(".container").remove()
+                $(".di").remove()
+                ajas(curPage, pageCount)
+
+            }
+
+            function next(curPage, pageCount) {
+                curPage = curPage + 1;
+                $(".container").remove()
+                $(".di").remove()
+                ajas(curPage, pageCount)
+            }
+
+            function before(curPage, pageCount) {
+                curPage = curPage - 1;
+                $(".container").remove()
+                $(".di").remove()
+                ajas(curPage, pageCount)
+            }
+
+            function last(curPage, pageCount) {
+                curPage = pageCount;
+                $(".container").remove()
+                $(".di").remove()
+                ajas(curPage, pageCount)
+            }
+
+        </script>
+    </head>
+    <body>
+        <div></div>
+        <div id="button" style="text-align: center">
+
+        </div>
+    </body>
+</html>

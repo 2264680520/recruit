@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.recruit.mapper.IPositionsMapper">
+    <resultMap id="PositionsMap" type="Positions">
+        <id property="id" column="id"></id>
+
+    </resultMap>
+
+    <resultMap id="PositionsMapper" type="Positions">
+        <id property="id" column="id"></id>
+
+
+        <collection property="company"
+                    ofType="Company"
+                    column="c_id"
+                    select="com.recruit.mapper.ICompanyMapper.findCompanyByCid"/>
+
+    </resultMap>
+
+    <select id="getCur" resultMap="PositionsMap">
+        select * from  positions where stauts=1 limit #{page.offset},#{page.pageSize};
+    </select>
+
+
+    <select id="getDetail" resultMap="PositionsMapper">
+        select * from positions  where id=#{position.id} ;
+    </select>
+
+
+    <select id="getPosById" resultMap="PositionsMap">
+        select * from positions where id=#{id};
+    </select>
+
+    <select id="getTotalCount" resultType="Integer">
+        select count(*) from positions where stauts=1;
+    </select>
+
+</mapper>

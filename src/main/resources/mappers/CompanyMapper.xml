@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.recruit.mapper.ICompanyMapper">
+    <!--查询用户所有记录-->
+    <select id="getPositionsTotalCount" resultType="Integer">
+        select count(*) from positions
+        where c_id=#{id}
+    </select>
+    <!--    获取所有的根据id获取本公司所有的招聘职位-->
+    <select id="getPositionsList" resultType="Positions" parameterType="Integer">
+       select *
+       from positions
+       where c_id=#{id}
+          ORDER BY puttime DESC
+       limit #{arg0},#{arg1}
+
+    </select>
+
+    <!--通过职位id获取职位信息-->
+    <select id="getPositionsById" parameterType="Integer" resultType="Positions">
+        select *
+        from positions
+        where id=#{id}
+    </select>
+
+    <!--公司修改招聘信息-->
+    <update id="updatePositionsByCompany" parameterType="Positions">
+        update positions
+        set post=#{post},positions.require=#{require},salary=#{salary},puttime=#{puttime},stauts=#{stauts}
+        where id=#{id}
+    </update>
+
+    <!-- 发布招聘-->
+    <insert id="addPositions" parameterType="Positions">
+        insert into positions(post,positions.require,salary,puttime,c_id) values (#{post},#{require},#{salary},#{puttime},#{c_id})
+    </insert>
+
+    <!--获取所有的申请记录总数-->
+    <select id="getEmployTotalCount" parameterType="Integer" resultType="Integer">
+       SELECT COUNT(*)
+       FROM employ e,`user` u,positions p
+       WHERE  e.p_id=p.id AND e.u_id=u.id AND p.c_id=#{id}
+    </select>
+
+
+    <!--根据公司id获取所有的申请本公司的用户-->
+    <select id="getEmployList" parameterType="Integer" resultMap="getPositionsUserByEmploy">
+        SELECT e.*,p.*,u.* ,e.id as eid,p.id as pid,e.id as eid
+        FROM employ e,`user` u,positions p
+        WHERE  e.p_id=p.id AND e.u_id=u.id AND p.c_id=#{id}
+        ORDER BY e.days DESC
+        LIMIT #{arg0},#{arg1}
+    </select>
+    <resultMap type="Employ" id="getPositionsUserByEmploy">
+        <id column="eid" property="id"/>
+        <result column="u_id" property="u_id"/>
+        <result column="p_id" property="p_id"/>
+        <result column="stauts" property="stauts"/>
+
+        <!-- 多对一的关系 -->
+        <!-- property: 指的是属性名称, javaType：指的是属性的类型 -->
+        <association property="positions" javaType="Positions">
+            <id column="pid" property="id"/>
+            <result column="post" property="post"/>
+            <result column="require" property="require"/>
+            <result column="salary" property="salary"/>
+            <result column="puttime" property="puttime"/>
+            <result column="c_id" property="c_id"/>
+        </association>
+        <association property="user" javaType="User">
+            <id column="uid" property="id"/>
+            <result column="username" property="username"/>
+            <result column="name" property="name"/>
+            <result column="sex" property="sex"/>
+            <result column="birthday" property="birthday"/>
+            <result column="school" property="school"/>
+            <result column="phone" property="phone"/>
+            <result column="email" property="email"/>
+            <result column="trade" property="trade"/>
+            <result column="salary" property="salary"/>
+            <result column="tip" property="tip"/>
+        </association>
+    </resultMap>
+
+    <!--给求职者进行审核，同意，拒绝等-->
+    <update id="updateEmployByCompany" parameterType="Integer">
+        update employ set stauts=#{stauts}
+        where id=#{id}
+    </update>
+
+    <select id="selectAllPss" parameterType="Integer" resultType="Positions">
+        SELECT * FROM
+        positions
+        WHERE stauts=1 and c_id=#{c_id}
+         ORDER BY positions.puttime DESC
+        LIMIT #{arg0},#{arg1}
+    </select>
+
+    <select id="getPssTotalCount" parameterType="Integer" resultType="Integer">
+        SELECT count(*) FROM
+        positions
+        WHERE stauts=1 and c_id=#{c_id}
+    </select>
+
+    <!-- 王庆球 -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
+
+    <!--企业映射器-->
+    <resultMap id="company" type="Company">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="address" column="address"/>
+        <result property="email" column="email"/>
+        <result property="phone" column="phone"/>
+        <result property="introdu" column="introdu"/>
+    </resultMap>
+
+    <!--企业登录sql语句-->
+    <select id="companyLogin" resultMap="company">
+        select c.id,c.username,c.password,c.name,c.address,c.email,c.phone,c.introdu from company c where c.username = #{companyLogin.username} and c.password = #{companyLogin.password};
+    </select>
+
+    <!--企业注册sql语句-->
+    <insert id="addCompany" keyProperty="addCompany.id" useGeneratedKeys="true">
+        insert into company(username,password,name,address,email,phone,introdu) values (
+            #{addCompany.username},
+            #{addCompany.password},
+            #{addCompany.name},
+            #{addCompany.address},
+            #{addCompany.email},
+            #{addCompany.phone},
+            #{addCompany.introdu}
+        );
+    </insert>
+
+    <!--企业信息查询sql语句-->
+    <select id="findCompany" resultMap="company">
+        select c.id,c.username,c.password,c.name,c.address,c.email,c.phone,c.introdu from company c where c.id = #{findCompany};
+    </select>
+
+    <!--企业信息修改sql语句-->
+    <update id="updateCompany">
+        update company  set
+        username = #{updateCompany.username},
+        password = #{updateCompany.password},
+        name = #{updateCompany.name},
+        address =  #{updateCompany.address},
+        email = #{updateCompany.email},
+        phone = #{updateCompany.phone},
+        introdu = #{updateCompany.introdu} where id = #{updateCompany.id};
+    </update>
+
+    <!--李绮珊-->
+    <resultMap id="companyMap" type="Company">
+        <id property="c_id"  column="id"/>
+
+    </resultMap>
+
+
+    <select id="findCompanyByCid" resultMap="companyMap">
+        select name,address,email,phone,introdu from company where id=#{cid};
+    </select>
+</mapper>

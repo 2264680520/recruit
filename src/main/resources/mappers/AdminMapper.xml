@@ -1,0 +1,239 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.recruit.mapper.IAdminMapper">
+    <!--查询用户所有记录-->
+    <select id="getUserTotalCount" resultType="Integer">
+        select count(*) from user
+    </select>
+
+    <!--分页查询个人用户-->
+    <select id="getUserList" parameterType="Integer" resultType="User">
+    select * from user limit #{arg0},#{arg1}
+</select>
+
+    <!--根据id找到实体类-->
+    <select id="getUserById" parameterType="Integer" resultType="User">
+        select * from user where id=#{id}
+    </select>
+
+    <update id="updateUserByAdmin" parameterType="User">
+        update user set username=#{username},password=#{password},name=#{name},
+        sex=#{sex},birthday=#{birthday},school=#{school},phone=#{phone},email=#{email},
+        trade=#{trade},salary=#{salary},tip=#{tip} where id=#{id}
+    </update>
+
+    <!--查询企业用户所有记录-->
+    <select id="getCompanyTotalCount" resultType="Integer">
+        select count(*) from company
+    </select>
+
+    <!--分页查询企业用户-->
+    <select id="getCompanyList" parameterType="Integer" resultType="Company">
+    select * from company limit #{arg0},#{arg1}
+</select>
+
+    <!--根据id找到企业实体类-->
+    <select id="getCompanyById" parameterType="Integer" resultType="Company">
+        select * from company where id=#{id}
+    </select>
+
+    <update id="updateCompanyByAdmin" parameterType="Company">
+        update company set username=#{username},password=#{password},name=#{name},
+        address=#{address},phone=#{phone},email=#{email},
+        introdu=#{introdu} where id=#{id}
+    </update>
+
+
+    <!--查询职位所有记录-->
+    <select id="getPositionsTotalCount" resultType="Integer">
+        select count(*) from positions
+    </select>
+    <!--多对一查询-->
+    <!-- 查询所有职位, 关联将公司查询出来 -->
+    <select id="getPositionsList" resultMap="PositionsWithCompany">
+			select c.* ,p.*,c.id as cid,p.id as pid
+            from company c,positions p
+            where c.id=p.c_id
+            ORDER BY p.puttime DESC
+            LIMIT #{arg0},#{arg1}
+		</select>
+    <resultMap type="Positions" id="PositionsWithCompany">
+        <id column="pid" property="id"/>
+        <result column="post" property="post"/>
+        <result column="require" property="require"/>
+        <result column="salary" property="salary"/>
+        <result column="puttime" property="puttime"/>
+        <result column="c_id" property="c_id"/>
+        <result column="is_delete" property="is_delete"/>
+        <result column="stauts" property="stauts"/>
+
+        <!--根据id找到职位实体类-->
+        <!-- property: 指的是属性名称, javaType：指的是属性的类型 -->
+        <association property="company" javaType="Company">
+            <id column="cid" property="id"/>
+            <result column="username" property="username"/>
+            <result column="password" property="password"/>
+            <result column="name" property="name"/>
+            <result column="address" property="address"/>
+            <result column="email" property="email"/>
+            <result column="phone" property="phone"/>
+            <result column="introdu" property="introdu"/>
+        </association>
+    </resultMap>
+
+
+    <!--根据id找到职位实体类-->
+    <!-- 查询职位关联将公司查询出来 -->
+    <select id="getPositionsById" resultMap="getPositionsWithCompany" parameterType="Integer">
+			select c.* ,p.*,c.id as cid,p.id as pid
+            from company c,positions p
+            where c.id=p.c_id and p.id=#{id}
+		</select>
+    <resultMap type="Positions" id="getPositionsWithCompany">
+        <id column="pid" property="id"/>
+        <result column="post" property="post"/>
+        <result column="require" property="require"/>
+        <result column="salary" property="salary"/>
+        <result column="puttime" property="puttime"/>
+        <result column="c_id" property="c_id"/>
+        <result column="is_delete" property="is_delete"/>
+        <result column="stauts" property="stauts"/>
+
+        <!-- 多对一的关系 -->
+        <!-- property: 指的是属性名称, javaType：指的是属性的类型 -->
+        <association property="company" javaType="Company">
+            <id column="cid" property="id"/>
+            <result column="username" property="username"/>
+            <result column="password" property="password"/>
+            <result column="name" property="name"/>
+            <result column="address" property="address"/>
+            <result column="email" property="email"/>
+            <result column="phone" property="phone"/>
+            <result column="introdu" property="introdu"/>
+        </association>
+    </resultMap>
+
+    <!-- 职位审核通过-->
+    <update id="positionsPss" parameterType="Integer">
+        update positions set stauts=1 where id=#{id}
+    </update>
+
+    <!--评论列表-->
+    <select id="findPositionsWithCompany" resultMap="getPositionsWithCompanyByCompany">
+			SELECT co.*, p.*,c.*,c.id as cid,p.id as pid,co.id as coid, COUNT(*) as count
+           FROM `comment` c,positions p,company co
+           WHERE c.p_id=p.id and p.c_id=co.id
+           GROUP BY p.id
+           LIMIT #{arg0},#{arg1}
+		</select>
+    <resultMap type="Comment" id="getPositionsWithCompanyByCompany">
+        <id column="cid" property="id"/>
+        <result column="u_id" property="u_id"/>
+        <result column="p_id" property="p_id"/>
+        <result column="content" property="content"/>
+        <result column="rtime" property="rtime"/>
+        <result column="count" property="count"/>
+
+
+        <!-- 多对一的关系 -->
+        <!-- property: 指的是属性名称, javaType：指的是属性的类型 -->
+        <association property="company" javaType="Company">
+            <id column="coid" property="id"/>
+            <result column="username" property="username"/>
+            <result column="password" property="password"/>
+            <result column="name" property="name"/>
+            <result column="address" property="address"/>
+            <result column="email" property="email"/>
+            <result column="phone" property="phone"/>
+            <result column="introdu" property="introdu"/>
+        </association>
+
+        <!-- property: 指的是属性名称, javaType：指的是属性的类型 -->
+        <association property="positions" javaType="Positions">
+            <id column="pid" property="id"/>
+            <result column="post" property="post"/>
+            <result column="require" property="require"/>
+            <result column="salary" property="salary"/>
+            <result column="puttime" property="puttime"/>
+            <result column="c_id" property="c_id"/>
+            <result column="is_delete" property="is_delete"/>
+            <result column="stauts" property="stauts"/>
+        </association>
+    </resultMap>
+    <!--查询评论分组总数-->
+    <select id="getPositionsWithCompany" resultType="Integer">
+       SELECT COUNT(*)
+           FROM (SELECT c.*
+           FROM `comment` c,positions p,company co
+           WHERE c.p_id=p.id and p.c_id=co.id
+           GROUP BY p.id) as a
+    </select>
+
+
+    <!--评论内容-->
+    <select id="getCommentByPositionsId" resultMap="getCommentWithCompanyWithUser" parameterType="Integer">
+			SELECT u.*,c.*,p.*,co.*,u.id as uid,c.id as cid,
+            p.id as pid,co.id as coid,co.password as cpassword,u.`password` as upassword ,
+            co.name as cname,u.`name` as uname,co.username as cusername,u.username as uusername
+            FROM `user` u,`comment` c,positions p,company co
+            WHERE c.p_id=p.id AND c.u_id=u.id AND p.c_id=co.id AND p.id=#{id}
+            ORDER BY c.rtime
+            LIMIT #{arg0},#{arg1}
+		</select>
+    <resultMap type="Comment" id="getCommentWithCompanyWithUser">
+        <id column="cid" property="id"/>
+        <result column="u_id" property="u_id"/>
+        <result column="p_id" property="p_id"/>
+        <result column="content" property="content"/>
+        <result column="rtime" property="rtime"/>
+
+
+        <!-- 多对一的关系 -->
+        <!-- property: 指的是属性名称, javaType：指的是属性的类型 -->
+        <association property="company" javaType="Company">
+            <id column="coid" property="id"/>
+            <result column="cusername" property="username"/>
+            <result column="cpassword" property="password"/>
+            <result column="cname" property="name"/>
+            <result column="address" property="address"/>
+            <result column="email" property="email"/>
+            <result column="phone" property="phone"/>
+            <result column="introdu" property="introdu"/>
+        </association>
+
+        <!-- property: 指的是属性名称, javaType：指的是属性的类型 -->
+        <association property="positions" javaType="Positions">
+            <id column="pid" property="id"/>
+            <result column="post" property="post"/>
+            <result column="require" property="require"/>
+            <result column="salary" property="salary"/>
+            <result column="puttime" property="puttime"/>
+            <result column="c_id" property="c_id"/>
+            <result column="is_delete" property="is_delete"/>
+            <result column="stauts" property="stauts"/>
+        </association>
+        <!-- property: 指的是属性名称, javaType：指的是属性的类型 -->
+        <association property="user" javaType="User">
+            <id column="uid" property="id"/>
+            <result column="uusername" property="username"/>
+            <result column="upassword" property="password"/>
+            <result column="uname" property="name"/>
+            <result column="sex" property="sex"/>
+            <result column="birthday" property="birthday"/>
+            <result column="school" property="school"/>
+            <result column="phone" property="phone"/>
+            <result column="email" property="email"/>
+            <result column="trade" property="trade"/>
+            <result column="salary" property="salary"/>
+            <result column="tip" property="tip"/>
+        </association>
+    </resultMap>
+
+    <!--查询具体评论总数-->
+    <select id="getCommentTotalCount" resultType="Integer" parameterType="Integer">
+     SELECT count(*)
+     FROM `user` u,`comment` c,positions p,company co
+     WHERE c.p_id=p.id AND c.u_id=u.id AND p.c_id=co.id AND p.id=#{id}
+    </select>
+</mapper>

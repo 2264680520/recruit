@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.recruit.mapper.IEmployMapper">
+
+    <resultMap id="EmployMapper" type="Employ">
+        <id property="id" column="id"></id>
+
+        <collection property="positions"
+                    ofType="Positions"
+                    column="p_id"
+                    select="com.recruit.mapper.IPositionsMapper.getDetail"/>
+
+    </resultMap>
+
+
+    <insert id="submitPosition" >
+        insert into employ (u_id, p_id,days) value (#{employ.u_id},#{employ.p_id},#{employ.days});
+    </insert>
+
+
+    <delete id="deleteSubmit">
+        delete from employ where id=#{id};
+    </delete>
+
+    <select id="getMassage" resultMap="EmployMapper">
+        select * from employ where stauts!=0 and u_id=#{u_id} limit #{page.offset},#{page.pageSize};
+    </select>
+
+    <select id="getTotalCount" resultType="Integer">
+        select count(*) from employ where  stauts!=3 and u_id=#{u_id} ;
+    </select>
+
+    <select id="getPageSubmit" resultMap="EmployMapper">
+        select * from  employ where  u_id=#{u_id}  and stauts!=3 limit #{page.offset},#{page.pageSize};
+    </select>
+
+
+    <select id="getTotal" resultType="Integer">
+        select count(*) from employ where stauts!=0 and u_id=#{uid};
+    </select>
+
+    <insert id="invite">
+        insert into employ (u_id, p_id,stauts,days) value (#{employ.u_id},#{employ.p_id},#{employ.stauts},#{employ.days});
+    </insert>
+
+</mapper>
